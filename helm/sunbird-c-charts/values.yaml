@@ -1,0 +1,123 @@
+global:
+  host: "registry.demodpgs.net"
+  database:
+    host: ""
+    user: "postgres"
+    port: "5432"
+    vendor: "postgres"
+  keycloak:
+    database: "registry"
+    admin:
+      username: "admin"
+    proxy_forwarding: true
+  registry:
+    database: "registry"
+    search_provider: "dev.sunbirdrc.registry.service.NativeSearchService"
+    signature_provider: "dev.sunbirdrc.registry.service.impl.SignatureV2ServiceImpl"
+    sso:
+      realm: "sunbird-rc"
+      admin_client_id: "admin-api"
+      client_id: "registry-frontend"
+    signature_enabled: true
+    keycloak_user_set_password: false
+    base_apis_enabled: false
+    log_level: DEBUG
+    enable_external_templates: true
+    enable_async: false
+    enable_authentication: true
+    enable_webhook: false
+    webhook_url: http://localhost:5001/api/v1/callback
+    manager_type: DefinitionsManager
+    swagger_enabled: true
+    swagger_title: SUNBIRD-RC
+    authentication_enabled: true
+    claims_enabled: true
+    certificate_enabled: true
+    encryption_enabled: false
+    idgen_enabled: false
+    opa_enabled: false
+    opa_allow_key_name: authorized
+    encryption_port : 8013
+    context_path : /
+    idformatFromMdms: false
+    mdmsProvider: org.egov.id.masterdata.provider.DBMasterDataProvider
+    autoCreateNewSeq: true
+    migrationEnabled: true
+    did_enabled: true
+    credential_did_method: rcw
+    issuer_did_method : issuer
+    schema_author: Registry
+    schema_author_did_method: author
+    envVars:
+      egov_mdms_provider: org.egov.id.masterdata.provider.DBMasterDataProvider
+  minio:
+    url:
+    access_key: admin
+    bucket_key: sunbird-rc
+  elastic_search:
+    url:
+    auth_enabled: false
+    username: ""
+  kafka:
+    url:
+  redis:
+    host:
+    port: 6379
+  vault:
+    address: http://vaultkv:8200
+    base_url: http://vaultkv:8200/v1
+    root_path: http://vaultkv:8200/v1/kv
+    vault_timeout: 5000
+    vault_proxy: false
+    vault_token: 
+  sunbird:
+    enable_auth: false
+    signing_algo: Ed25519
+    jwks_uri: ""
+  secrets:
+    DB_PASSWORD: ""
+    ELASTIC_SEARCH_PASSWORD: ""
+    KEYCLOAK_ADMIN_CLIENT_SECRET: YjJiMGNhYjEtMjQzZC00ZTZlLTkzZTctOTAxNWZmNjZkZjJi
+    KEYCLOAK_ADMIN_PASSWORD: YWRtaW4xMjM=
+    KEYCLOAK_DEFAULT_USER_PASSWORD: YWRtaW5AMTIz
+    MINIO_SECRET_KEY: Kgo=
+    VAULT_SECRET_TOKEN: ""
+    DB_URL: ""
+encryption-service:
+  envVars:
+    egov_mdms_provider: org.egov.enc.masterdata.provider.DBMasterDataProvider
+id-gen-service:
+  envVars:
+    egov_mdms_provider: org.egov.id.masterdata.provider.DBMasterDataProvider
+registry:
+  ingress:
+    enabled: true
+    className: "alb"
+    annotations:
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80},{"HTTPS":443}]'
+      alb.ingress.kubernetes.io/group.name: sbrc-lb
+      alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/target-group-attributes: stickiness.enabled=true,stickiness.lb_cookie.duration_seconds=3600
+      ingress.kubernetes.io/rewrite-target: /   # Added rewrite annotation here for / to /selfservice
+     #alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-south-1:370803901956:certificate/59fa4298-f8da-4d53-9314-8b7266416460
+    hosts:
+      - paths:
+          - path: /
+            pathType: Prefix
+keycloak-service:
+  ingress:
+    enabled: true
+    className: "alb"
+    annotations:
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80},{"HTTPS":443}]'
+      alb.ingress.kubernetes.io/group.name: sbrc-lb
+      alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/target-group-attributes: stickiness.enabled=true,stickiness.lb_cookie.duration_seconds=3600  
+      ingress.kubernetes.io/rewrite-target: /   # Added rewrite annotation here for / to /selfservice
+      #alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-south-1:370803901956:certificate/59fa4298-f8da-4d53-9314-8b7266416460
+    hosts:
+      - paths:
+          - path: /auth
+            pathType: Prefix
