@@ -13,6 +13,7 @@ export interface RdsStackProps extends cdk.StackProps {
   rdspassword: String;
 }
 
+// provision of RDS  
 export class rdsStack extends cdk.Stack {
   public readonly rdsSecret: string;
   public readonly rdsHost: string;
@@ -24,6 +25,7 @@ export class rdsStack extends cdk.Stack {
     const vpc = props.vpc;
     const RDS_USER = props.rdsuser;
     const RDS_PASSWORD = props.rdspassword;
+
     const kmsKey = new kms.Key(this, "RDSKmsKey", {
       enableKeyRotation: true,
     });
