@@ -32,7 +32,7 @@ export const getConfig = (): ConfigProps => ({
   CIDR: process.env.CIDR || "",
   MAX_AZS: Number(process.env.MAZ_AZs) || 2,
   CHART: "sunbird_rc_charts",
-  REPOSITORY: "https://github.com/Sunbird-RC/aws-cdk/packages",
+  REPOSITORY: "https://sunbird-rc.github.io/aws-cdk/packages",
   NAMESPACE: "sbrc2",
   VAULT_RELEASE_NAME: "sbrc2",
   C_RELEASE_NAME: "sbrc2-c",
