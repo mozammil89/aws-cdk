@@ -9,7 +9,7 @@ entries:
     name: sunbird-c-charts
     type: application
     urls:
-    - packages/sunbird-c-charts-0.0.1.tgz
+    - sunbird-c-charts-0.0.1.tgz
     version: 0.0.1
   sunbird-r-charts:
   - apiVersion: v2
@@ -20,7 +20,7 @@ entries:
     name: sunbird-r-charts
     type: application
     urls:
-    - packages/sunbird-r-charts-0.0.1.tgz
+    - sunbird-r-charts-0.0.1.tgz
     version: 0.0.1
   sunbird_rc_charts:
   - apiVersion: v2
@@ -31,7 +31,7 @@ entries:
     name: sunbird_rc_charts
     type: application
     urls:
-    - packages/sunbird_rc_charts-0.0.1.tgz
+    - sunbird_rc_charts-0.0.1.tgz
     version: 0.0.1
   vault-init:
   - apiVersion: v2
@@ -42,6 +42,6 @@ entries:
     name: vault-init
     type: application
     urls:
-    - packages/vault-init-0.1.0.tgz
+    - vault-init-0.1.0.tgz
     version: 0.1.0
 generated: "2024-07-08T13:09:38.794582075Z"
