@@ -39,7 +39,7 @@ export class sunbirdrc2helmStack extends cdk.Stack {
         const getValueFromSecret = (secret: ISecret, key: string): string => {
             return secret.secretValueFromJson(key).unsafeUnwrap();
         };
-        
+
         const base64encodedDBpass = cdk.Fn.base64(RDS_PASSWORD);
 
         const repository = props.config.REPOSITORY;
@@ -56,6 +56,7 @@ export class sunbirdrc2helmStack extends cdk.Stack {
         new helm.HelmChart(this, "cdksbrc2helm", {
             cluster: eksCluster,
             chart: chartName,
+            version: '0.0.2',
             namespace: namespace,
             createNamespace: true,
             release: releaseName,
