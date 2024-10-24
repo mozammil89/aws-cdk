@@ -5,10 +5,7 @@ import * as eks from "aws-cdk-lib/aws-eks";
 import * as iam from "aws-cdk-lib/aws-iam";
 import { Construct } from "constructs";
 import { ConfigProps } from "./config";
-import { KubectlV29Layer } from '@aws-cdk/lambda-layer-kubectl-v29'
-import { CfnAutoScalingGroup } from "aws-cdk-lib/aws-autoscaling";
-
-
+import { KubectlV30Layer } from '@aws-cdk/lambda-layer-kubectl-v30'
 
 export interface EksEC2StackProps extends cdk.StackProps {
     config: ConfigProps;
@@ -36,12 +33,6 @@ export class eksec2Stack extends cdk.Stack {
             "Allow EKS traffic"
         );
 
-
-        const principal = new iam.WebIdentityPrincipal('cognito-identity.amazonaws.com', {
-            'StringEquals': { 'cognito-identity.amazonaws.com:aud': 'us-east-2:12345678-abcd-abcd-abcd-123456' },
-            'ForAnyValue:StringLike': { 'cognito-identity.amazonaws.com:amr': 'unauthenticated' },
-        });
-
         const iamRole = iam.Role.fromRoleArn(this, "MyIAMRole", ROLE_ARN);
 
         const readonlyRole = new iam.Role(this, "ReadOnlyRole", {
@@ -52,27 +43,26 @@ export class eksec2Stack extends cdk.Stack {
             iam.ManagedPolicy.fromAwsManagedPolicyName("ReadOnlyAccess")
         );
 
-
         this.eksCluster = new eks.Cluster(this, "eksec2Cluster", {
             vpc: vpc,
             vpcSubnets: [{ subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS }],
-            defaultCapacity: 20,
+            defaultCapacity: 5,
             defaultCapacityInstance: new ec2.InstanceType("t2.medium"),
-            kubectlLayer: new KubectlV29Layer(this, "kubectl"),
-            version: eks.KubernetesVersion.V1_29,
+            kubectlLayer: new KubectlV30Layer(this, "kubectl"),
+            version: eks.KubernetesVersion.V1_30,
             securityGroup: securityGroupEKS,
             endpointAccess: eks.EndpointAccess.PUBLIC_AND_PRIVATE,
             ipFamily: eks.IpFamily.IP_V4,
             clusterName: EKS_CLUSTER_NAME,
             mastersRole: iamRole,
             outputClusterName: true,
+            authenticationMode: eks.AuthenticationMode.API_AND_CONFIG_MAP,
             outputConfigCommand: true,
 
             albController: {
-                version: eks.AlbControllerVersion.V2_5_1,
+                version: eks.AlbControllerVersion.V2_8_1,
                 repository: "public.ecr.aws/eks/aws-load-balancer-controller",
             },
-
         });
 
         const key1 = this.eksCluster.openIdConnectProvider.openIdConnectProviderIssuer;
@@ -99,13 +89,11 @@ export class eksec2Stack extends cdk.Stack {
         // Attach a managed policy to the role
         oidcEKSCSIRole.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AmazonEBSCSIDriverPolicy"))
 
-        const ebscsi = new eks.CfnAddon(this, "addonEbsCsi",
-            {
-                addonName: "aws-ebs-csi-driver",
-                clusterName: this.eksCluster.clusterName,
-                serviceAccountRoleArn: oidcEKSCSIRole.roleArn
-            }
-        );
+        new eks.CfnAddon(this, "addonEbsCsi", {
+            addonName: "aws-ebs-csi-driver",
+            clusterName: this.eksCluster.clusterName,
+            serviceAccountRoleArn: oidcEKSCSIRole.roleArn
+        });
 
         new cdk.CfnOutput(this, String("OIDC-issuer"), {
             value: this.eksCluster.clusterOpenIdConnectIssuer,
@@ -115,14 +103,13 @@ export class eksec2Stack extends cdk.Stack {
             value: this.eksCluster.clusterOpenIdConnectIssuerUrl,
         });
 
-
         new cdk.CfnOutput(this, "EKS Cluster Name", {
             value: this.eksCluster.clusterName,
         });
+
         new cdk.CfnOutput(this, "EKS Cluster Arn", {
             value: this.eksCluster.clusterArn,
         });
-
 
     }
 }

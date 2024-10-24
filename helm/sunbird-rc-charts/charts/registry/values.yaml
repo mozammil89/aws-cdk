@@ -59,7 +59,7 @@ ingress:
 resources:
    requests:
      cpu: 500m
-     memory: 2G
+     memory: 1G
 
 autoscaling:
   enabled: true
