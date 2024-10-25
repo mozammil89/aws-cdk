@@ -1,7 +1,25 @@
 ## AWS CDK One Click Deployment ##
 
-## Prerequisties:
-Configuring AWS CLI is a crucial step in working with AWS CDK. You can do it in your local environment.If you prefer to configure AWS CLI on a remote server, you can SSH-ing into the server and running aws configure to set up the CLI credentials and configuration. Just ensure that the server has network connectivity to AWS services and that you have the necessary permissions to configure AWS CLI and access AWS resources from that server.
+## Prerequisites
+
+- **AWS Account**: An AWS account to deploy AWS CDK stacks
+- **[AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)**: Configured with AWS account
+- **Kubectl Client**: Configured with the Amazon EKS cluster. 
+- **Public Domain/Sub-Domain**: Along with SSL certificates for HTTPS.
+
+### Public Domain/sub-domain
+
+Sunbird RC requires a public domain to be associated with `Registry` service.
+
+Users must obtain a public domain and/or create subdomains in an existing domain. Additionally, an SSL certificate must be issued for subdomain to enable HTTPS for `Registry` service. You can use [AWS Certificate Manager](https://aws.amazon.com/certificate-manager/pricing/), which provides public SSL/TLS certificates at no cost.
+
+## Requesting a Public SSL Certificate through AWS Certificate Manager
+
+To obtain an SSL certificate through AWS Certificate Manager, follow the easy steps provided in the official [AWS ACM Documentation](https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-request-public.html).
+
+Once a certificate is issued for your subdomain, copy the certificate ARN to be used in the environment variable later. The certificate ARN follows this format:
+
+`arn:aws:acm:ap-south-1:<aws-account-id>:certificate/<identifier>`
 
 ### AWS CDK Stack Overview
 The CDK comprises stacks designed to perform unique provisioning steps, making the overall automation modular. Here is an overview of all the stacks along with the actions they perform:
@@ -47,8 +65,12 @@ cdk bootstrap aws://<ACCOUNT-NUMBER>/<REGION>
 | MAX_AZS                   | 2                                                                                     | AWS Availability Zone count,   default 2                                                                                                                               |
 | RDS_USER                  | postgres                                                                              | Database user name for core   registory service, default 'postgres'                                                                                                    |
 | RDS_PASSWORD              | NLhL*I-e54e                                                                           | Database password, used while DB   creation and passed down to Sunbrd RC services helm chart                                                                           |
-| EKS_CLUSTER_NAME          | ekscluster-sbrc2                                                                      | AWS EKS Cluster name                                                                                                                                                   |
-| ROLE_ARN                  | arn:aws:iam::123456789012:role/ AWSReservedSSO_AWSAdministratorAccess | Amazon EKS mastersRole, to be   associated with the system:masters RBAC group, giving super-user access to   the cluster                                               |
+| EKS_CLUSTER_NAME          | ekscluster-sbrc2                                                                      | AWS EKS Cluster name                                                                                                                                               |
+| ROLE_ARN                  | arn:aws:iam::123456789012:role/ AWSReservedSSO_AWSAdministratorAccess | Amazon EKS mastersRole, to be   associated with the system:masters RBAC group, giving super-user access to   the cluster      
+| CERT_ARN          | `arn:aws:acm:ap-south-1:<aws-account-id>:certificate/<identifier>`                                                                      | SSL Certificate Role ARN obtain from AWS Certificate Manager service    
+                                         |
+| RC_EXTERNAL_DOMAIN          | `sunbric-rc.exmaple.com`                                                                      | Domain/subdomain to be used with `registry` service and for which SSL CERT ARN is generated.    
+                                         |
 | SUNBIRD_RC_MODULES_CHOICE | RC                                                                                    | Modules to be installed as part   of this deployment. Values may be  **'R'** -     Registry,  **'C'** - Credentialing, **'RC'** - Registry and Credentialing. Default value is 'RC'  |
 
 **Deploy CDK**
