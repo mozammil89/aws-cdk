@@ -1,5 +1,6 @@
 global:
-  host: "registry.demodpgs.net"
+  host: ""
+  certificateARN: ""
   database:
     host: ""
     user: "postgres"
@@ -100,7 +101,9 @@ registry:
       alb.ingress.kubernetes.io/target-type: ip
       alb.ingress.kubernetes.io/target-group-attributes: stickiness.enabled=true,stickiness.lb_cookie.duration_seconds=3600
       ingress.kubernetes.io/rewrite-target: /   # Added rewrite annotation here for / to /selfservice
-     #alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-south-1:370803901956:certificate/59fa4298-f8da-4d53-9314-8b7266416460
+      # SSL certificate ARN from AWS ACM, required for HTTPS
+      alb.ingress.kubernetes.io/certificate-arn: ""
+      alb.ingress.kubernetes.io/ssl-redirect: '443'
     hosts:
       - paths:
           - path: /
@@ -116,7 +119,9 @@ keycloak-service:
       alb.ingress.kubernetes.io/target-type: ip
       alb.ingress.kubernetes.io/target-group-attributes: stickiness.enabled=true,stickiness.lb_cookie.duration_seconds=3600  
       ingress.kubernetes.io/rewrite-target: /   # Added rewrite annotation here for / to /selfservice
-      #alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-south-1:370803901956:certificate/59fa4298-f8da-4d53-9314-8b7266416460
+      # SSL certificate ARN from AWS ACM, required for HTTPS
+      alb.ingress.kubernetes.io/certificate-arn: ""
+      alb.ingress.kubernetes.io/ssl-redirect: '443'
     hosts:
       - paths:
           - path: /auth

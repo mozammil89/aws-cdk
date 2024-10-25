@@ -46,8 +46,8 @@ export class eksec2Stack extends cdk.Stack {
         this.eksCluster = new eks.Cluster(this, "eksec2Cluster", {
             vpc: vpc,
             vpcSubnets: [{ subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS }],
-            defaultCapacity: 5,
-            defaultCapacityInstance: new ec2.InstanceType("t2.medium"),
+            defaultCapacity: 3,
+            defaultCapacityInstance: new ec2.InstanceType("t2.large"),
             kubectlLayer: new KubectlV30Layer(this, "kubectl"),
             version: eks.KubernetesVersion.V1_30,
             securityGroup: securityGroupEKS,

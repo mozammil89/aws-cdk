@@ -32,6 +32,8 @@ export class sunbirdrc2helmStack extends cdk.Stack {
         const signatureProviderName = props.signatureProviderName;
         const releaseName = props.config.RC_RELEASE_NAME;
         const credentialingVaultReleaseName = props.config.VAULT_RELEASE_NAME;
+        const rcExternalDomain = props.config.RC_EXTERNAL_DOMAIN;
+        const sslCertArn = props.config.CERT_ARN;
 
         const secretName = sm.Secret.fromSecretAttributes(this, "ImportedSecret", {
             secretCompleteArn: rdssecretARN,
@@ -56,7 +58,7 @@ export class sunbirdrc2helmStack extends cdk.Stack {
         new helm.HelmChart(this, "cdksbrc2helm", {
             cluster: eksCluster,
             chart: chartName,
-            version: '0.0.2',
+            // version: '0.0.2',
             namespace: namespace,
             createNamespace: true,
             release: releaseName,
@@ -64,6 +66,8 @@ export class sunbirdrc2helmStack extends cdk.Stack {
             repository: repository,
             values: {
                 global: {
+                    host: rcExternalDomain,
+                    certificateARN: sslCertArn,
                     database:
                     {
                         host: rdsHost,

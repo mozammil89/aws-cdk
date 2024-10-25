@@ -1,5 +1,6 @@
 global:
-  host: "registry.demodpgs.net"
+  host: ""
+  certificateARN: ""
   database:
     host: ""
     user: "postgres"
@@ -95,15 +96,12 @@ registry:
     className: "alb"
     annotations:
       alb.ingress.kubernetes.io/scheme: internet-facing
-      # Uncomment the following line if you want to enable both HTTP and HTTPS
-      # alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80},{"HTTPS":443}]'
-      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80},{"HTTPS":443}]'
       alb.ingress.kubernetes.io/group.name: sbrc-lb
       alb.ingress.kubernetes.io/target-type: ip
       alb.ingress.kubernetes.io/target-group-attributes: stickiness.enabled=true,stickiness.lb_cookie.duration_seconds=3600
       ingress.kubernetes.io/rewrite-target: /   # Added rewrite annotation here for / to /selfservice
-      # Uncomment the following line to supply SSL certificate ARN from AWS ACM, required for HTTPS
-      #alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-south-1:370803901956:certificate/59fa4298-f8da-4d53-9314-8b7266416460
+      alb.ingress.kubernetes.io/ssl-redirect: '443'
     hosts:
       - paths:
           - path: /
@@ -114,15 +112,12 @@ keycloak-service:
     className: "alb"
     annotations:
       alb.ingress.kubernetes.io/scheme: internet-facing
-      # Uncomment the following line if you want to enable both HTTP and HTTPS
-      # alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80},{"HTTPS":443}]'
-      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80},{"HTTPS":443}]'
       alb.ingress.kubernetes.io/group.name: sbrc-lb
       alb.ingress.kubernetes.io/target-type: ip
       alb.ingress.kubernetes.io/target-group-attributes: stickiness.enabled=true,stickiness.lb_cookie.duration_seconds=3600  
       ingress.kubernetes.io/rewrite-target: /   # Added rewrite annotation here for / to /selfservice
-      # Uncomment the following line to supply SSL certificate ARN from AWS ACM, required for HTTPS
-      #alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-south-1:370803901956:certificate/59fa4298-f8da-4d53-9314-8b7266416460
+      alb.ingress.kubernetes.io/ssl-redirect: '443'
     hosts:
       - paths:
           - path: /auth

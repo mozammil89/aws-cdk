@@ -3,7 +3,7 @@
 {{- $svcPort := .Values.service.port -}}
 {{- if and .Values.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
   {{- if not (hasKey .Values.ingress.annotations "kubernetes.io/ingress.class") }}
-  {{- $_ := set .Values.ingress.annotations "kubernetes.io/ingress.class" .Values.ingress.className}}
+  {{- $_ := set .Values.ingress.annotations "kubernetes.io/ingress.class" .Values.ingress.className }}
   {{- end }}
 {{- end }}
 {{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
@@ -23,6 +23,7 @@ metadata:
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
+    alb.ingress.kubernetes.io/certificate-arn: {{ .Values.global.certificateARN | quote }}
 spec:
   {{- if and .Values.ingress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
   ingressClassName: {{ .Values.ingress.className }}
@@ -30,19 +31,17 @@ spec:
   {{- if .Values.ingress.tls }}
   tls:
     {{- range .Values.ingress.tls }}
-    - hosts:
+    - secretName: {{ .secretName }}
+      hosts:
         {{- range .hosts }}
         - {{ . | quote }}
         {{- end }}
-      secretName: {{ .secretName }}
     {{- end }}
   {{- end }}
   rules:
-    - host: {{ .Values.global.host | quote }}
-    {{- range .Values.ingress.hosts }}
-      http:
+    - http:
         paths:
-          {{- range .paths }}
+          {{- range .Values.ingress.paths }}
           - path: {{ .path }}
             {{- if and .pathType (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion) }}
             pathType: {{ .pathType }}
@@ -58,5 +57,4 @@ spec:
               servicePort: {{ $svcPort }}
               {{- end }}
           {{- end }}
-    {{- end }}
 {{- end }}
