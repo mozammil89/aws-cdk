@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: keycloak-registry-setup
-          image: curlimages/curl:latest
+          image: bitnami/kubectl:latest
           command: ["/bin/sh", "-c"]
           args:
             - |
