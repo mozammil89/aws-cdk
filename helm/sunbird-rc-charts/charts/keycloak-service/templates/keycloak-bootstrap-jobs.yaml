@@ -54,7 +54,7 @@ spec:
                 # Check if TOKEN is empty or null
                 if [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ]; then
                   echo "Failed to obtain token, retrying in 5 seconds..."
-                  sleep 5
+                  sleep 60
                 else
                   echo "Token obtained successfully: $TOKEN"  # Print the obtained token
                   break  # Exit the loop if the token is successfully obtained
