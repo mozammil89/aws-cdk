@@ -48,16 +48,15 @@ spec:
 
               while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
                   echo "Attempting to obtain token from Keycloak (Attempt $ATTEMPT)..."
-
+                  
                   # Attempt to get the token
                   TOKEN=$(curl -k -X POST "$KEYCLOAK_URL/protocol/openid-connect/token" \
                       --data "grant_type=password&client_id=admin-cli&username=$USERNAME&password=$PASSWORD" | jq -r .access_token)
 
-                  # Check if TOKEN is empty or null
-                  if [ -z "$TOKEN" ] || [ "$TOKEN" == "null" ]; then
+                  if [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ]; then
                       echo "Failed to obtain token, retrying in 60 seconds..."
-                      sleep 60
-                      ((ATTEMPT++))
+                      sleep 30
+                      ATTEMPT=$((ATTEMPT + 1))
                   else
                       echo "Token obtained successfully: $TOKEN"
                       break
