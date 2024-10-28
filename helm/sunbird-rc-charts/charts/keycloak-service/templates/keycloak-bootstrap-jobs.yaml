@@ -45,19 +45,20 @@ spec:
 
               # Retry logic for obtaining token
               for i in {1..10}; do
-                echo "Attempting to obtain token from Keycloak..."
+                echo "Attempting to obtain token from Keycloak (Attempt $i)..."
+                
+                # Attempt to obtain the token
                 export TOKEN=$(curl -k -X POST "$KEYCLOAK_URL/realms/$REALM/protocol/openid-connect/token" \
-                  --data "grant_type=password&client_id=admin-cli&username=$USERNAME&password=$PASSWORD" \
-                  | jq -r .access_token)
+                  --data "grant_type=password&client_id=admin-cli&username=$USERNAME&password=$PASSWORD" | jq -r .access_token)
 
-                if [ "$TOKEN" != "null" ]; then
-                echo $TOKEN
-                  echo "Token obtained successfully."
-                  break
+                # Check if TOKEN is empty or null
+                if [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ]; then
+                  echo "Failed to obtain token, retrying in 5 seconds..."
+                  sleep 5
+                else
+                  echo "Token obtained successfully: $TOKEN"  # Print the obtained token
+                  break  # Exit the loop if the token is successfully obtained
                 fi
-
-                echo "Failed to obtain token, retrying in 5 seconds..."
-                sleep 5
               done
 
               # Download realm-export.json
