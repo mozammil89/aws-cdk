@@ -51,6 +51,7 @@ spec:
                   | jq -r .access_token)
 
                 if [ "$TOKEN" != "null" ]; then
+                echo $TOKEN
                   echo "Token obtained successfully."
                   break
                 fi
