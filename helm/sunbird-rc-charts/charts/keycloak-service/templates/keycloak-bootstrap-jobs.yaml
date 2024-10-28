@@ -16,7 +16,7 @@ spec:
       serviceAccountName: keycloak-setup-sa
       containers:
         - name: keycloak-registry-setup
-          image: bitnami/kubectl:latest
+          image: ghcr.io/mozammil89/vault-init
           command: ["/bin/sh", "-c"]
           args:
             - |
