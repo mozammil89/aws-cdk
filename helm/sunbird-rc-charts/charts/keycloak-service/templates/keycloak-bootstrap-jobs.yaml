@@ -84,6 +84,9 @@ spec:
                 -p='[{"op": "replace", "path": "/data/KEYCLOAK_ADMIN_CLIENT_SECRET", "value": "'$KEYCLOAK_ADMIN_CLIENT_SECRET'"}]'
               echo "Kubernetes secret updated successfully."
               
+              echo "Restarting Registry service with Keycloak client secret"
+              kubectl -n {{ .Release.Namespace }} rollout restart deployment {{ .Release.Namespace }}-rc-registry
+
               echo "Keycloak setup process completed."
       restartPolicy: Never
   backoffLimit: 4
