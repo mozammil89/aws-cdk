@@ -50,11 +50,11 @@ spec:
                   echo "Attempting to obtain token from Keycloak (Attempt $ATTEMPT)..."
                   
                   # Attempt to get the token
-                  TOKEN=$(curl -k -X POST "$KEYCLOAK_URL/protocol/openid-connect/token" \
+                  TOKEN=$(curl -k -X POST "$KEYCLOAK_URL/realms/master/protocol/openid-connect/token" \
                       --data "grant_type=password&client_id=admin-cli&username=$USERNAME&password=$PASSWORD" | jq -r .access_token)
 
                   if [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ]; then
-                      echo "Failed to obtain token, retrying in 60 seconds..."
+                      echo "Failed to obtain token, retrying in 30 seconds..."
                       sleep 30
                       ATTEMPT=$((ATTEMPT + 1))
                   else
@@ -62,6 +62,7 @@ spec:
                       break
                   fi
               done
+
 
               # Download realm-export.json
               echo "Downloading realm-export.json..."
