@@ -5,10 +5,10 @@
 replicaCount: 1
 
 image:
-  repository: mozammil89/vault-init
+  repository: ghcr.io/mozammil89/vault-init
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  # tag: "latest"
+  tag: latest
   envVars: 
     NAMESPACE: ""
     VAULT_NAME: ""
