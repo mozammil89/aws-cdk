@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: mozammil89/vault-init:latest
+  repository: mozammil89/vault-init
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   # tag: "latest"

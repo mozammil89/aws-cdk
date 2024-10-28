@@ -14,7 +14,7 @@ export class helmvaultinitStack extends cdk.Stack {
         super(scope, id, props);
         const eksCluster = props.eksCluster;
         const vaultInitRepository = props.config.REPOSITORY;
-        const vaulInitVersion = "0.1.0";
+        // const vaulInitVersion = "0.1.0";
         const namespace = props.config.NAMESPACE;
         const release = props.config.VAULTINIT_RELEASE_NAME;
         const chart = "vault-init";
@@ -27,7 +27,7 @@ export class helmvaultinitStack extends cdk.Stack {
             namespace: namespace,
             createNamespace: true,
             release: release,
-            version: vaulInitVersion,
+            // version: vaulInitVersion,
             wait: false,
             repository: vaultInitRepository,
             values: {
