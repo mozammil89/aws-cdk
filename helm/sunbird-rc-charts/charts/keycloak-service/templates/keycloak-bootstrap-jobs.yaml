@@ -1,0 +1,62 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: keycloak-setup
+  namespace: {{ .Release.Namespace }}  
+  labels:
+    app.kubernetes.io/instance: sbrc2-rc
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: keycloak-setup
+    app.kubernetes.io/version: latest
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+spec:
+  template:
+    spec:
+      containers:
+        - name: keycloak-registry-setup
+          image: curlimages/curl:latest
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              # Wait for Keycloak pod to be ready
+              until kubectl -n {{ .Release.Namespace }} get pods -l app.kubernetes.io/name=keycloak-service -o jsonpath='{.items[0].status.phase}' | grep -q "Running"; do
+                echo "Waiting for Keycloak pod to be ready..."
+                sleep 5
+              done
+
+              # Get Keycloak pod IP
+              KEYCLOAK_POD_IP=$(kubectl -n {{ .Release.Namespace }} get pod -l app.kubernetes.io/name=keycloak-service -o jsonpath='{.items[0].status.podIP}')
+
+              # Define Keycloak URL using pod IP
+              export KEYCLOAK_URL="http://$KEYCLOAK_POD_IP:8080/auth"
+              export REALM="master"
+              export USERNAME="admin"
+              export PASSWORD="admin123"
+              
+              export TOKEN=$(curl -k -X POST "$KEYCLOAK_URL/realms/$REALM/protocol/openid-connect/token" \
+                --data "grant_type=password&client_id=admin-cli&username=$USERNAME&password=$PASSWORD" \
+                | jq -r .access_token)
+
+              curl -L -o realm-export.json https://raw.githubusercontent.com/Sunbird-RC/sunbird-rc-core/main/imports/realm-export.json
+
+              curl -k -X POST "$KEYCLOAK_URL/admin/realms" \
+                -H "Authorization: Bearer $TOKEN" \
+                -H "Content-Type: application/json" \
+                --data-binary @realm-export.json
+
+              export CLIENT_ID=$(curl -k -X GET "$KEYCLOAK_URL/admin/realms/sunbird-rc/clients" \
+                -H "Authorization: Bearer $TOKEN" \
+                -H "Content-Type: application/json" | jq -r '.[] | select(.clientId == "admin-api") | .id')
+
+              export KEYCLOAK_ADMIN_CLIENT_SECRET=$(curl -k -X POST "$KEYCLOAK_URL/admin/realms/sunbird-rc/clients/$CLIENT_ID/client-secret" \
+                -H "Authorization: Bearer $TOKEN" \
+                -H "Content-Type: application/json" | jq -r .value | base64)
+
+              # Update Kubernetes secret with new KEYCLOAK_ADMIN_CLIENT_SECRET
+              echo "Updating Kubernetes secret with new Keycloak admin client secret..."
+              kubectl -n {{ .Values.namespace }} patch secret rc-secret \
+                --type='json' \
+                -p='[{"op": "replace", "path": "/data/KEYCLOAK_ADMIN_CLIENT_SECRET", "value": "'$KEYCLOAK_ADMIN_CLIENT_SECRET'"}]'
+      restartPolicy: Never
+  backoffLimit: 4
