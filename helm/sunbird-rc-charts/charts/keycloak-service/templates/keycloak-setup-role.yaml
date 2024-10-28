@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: keycloak-setup-sa
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/instance: sbrc2-rc
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: keycloak-setup
+    app.kubernetes.io/version: latest
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: keycloak-setup-sa-role
+  namespace: {{ .Release.Namespace }}  
+  labels:
+    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - pods/exec
+  - secrets
+  verbs:
+  - create
+  - get
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: keycloak-setup-sa-rolebinding
+  namespace: {{ .Release.Namespace }}  
+  labels:
+    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: keycloak-setup-sa-role  
+subjects:
+- kind: ServiceAccount
+  name: keycloak-setup-sa  # Name of the ServiceAccount
+  namespace: {{ .Release.Namespace }}
