@@ -20,6 +20,7 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             - |
+              set -x
               # Wait for Keycloak pod to be ready
               until kubectl -n {{ .Release.Namespace }} get pods -l app.kubernetes.io/name=keycloak-service -o jsonpath='{.items[0].status.phase}' | grep -q "Running"; do
                 echo "Waiting for Keycloak pod to be ready..."
