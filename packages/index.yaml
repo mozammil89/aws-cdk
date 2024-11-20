@@ -3,45 +3,115 @@ entries:
   sunbird-c-charts:
   - apiVersion: v2
     appVersion: 0.0.13
-    created: "2024-07-08T13:09:38.797079587Z"
+    created: "2024-10-28T13:41:30.651147+05:30"
+    description: A Helm chart for Sunbird RC
+    digest: cac9406f257b3ed235a669ddd668a32ce45ef2d3400082861c053dc77bc06182
+    name: sunbird-c-charts
+    type: application
+    urls:
+    - sunbird-c-charts-0.0.3.tgz
+    version: 0.0.3
+  - apiVersion: v2
+    appVersion: 0.0.13
+    created: "2024-10-28T13:41:30.648063+05:30"
+    description: A Helm chart for Sunbird RC
+    digest: c97b42db5cdc02e0b74a7b73b6d18033e6c5df8df539aa436b9ab169ad5583b3
+    name: sunbird-c-charts
+    type: application
+    urls:
+    - sunbird-c-charts-0.0.2.tgz
+    version: 0.0.2
+  - apiVersion: v2
+    appVersion: 0.0.13
+    created: "2024-10-28T13:41:30.644812+05:30"
     description: A Helm chart for Sunbird RC
     digest: 2cc3ee5409bdb8460c81fec0d45c1e4edd1d856e1845801a4d96cd043759c48d
     name: sunbird-c-charts
     type: application
     urls:
-    - packages/sunbird-c-charts-0.0.1.tgz
+    - sunbird-c-charts-0.0.1.tgz
     version: 0.0.1
   sunbird-r-charts:
   - apiVersion: v2
     appVersion: 0.0.13
-    created: "2024-07-08T13:09:38.802018286Z"
+    created: "2024-10-28T13:41:30.668055+05:30"
+    description: A Helm chart for Sunbird RC
+    digest: d4791f3e2f03e657d86b74196b6ce341bcb6b5f7f9a138335f14a3093780b7d2
+    name: sunbird-r-charts
+    type: application
+    urls:
+    - sunbird-r-charts-0.0.3.tgz
+    version: 0.0.3
+  - apiVersion: v2
+    appVersion: 0.0.13
+    created: "2024-10-28T13:41:30.66316+05:30"
+    description: A Helm chart for Sunbird RC
+    digest: b495afb052e59d141bd3a768023f8f0c86c8851cba93c709369ad6e07fa22c3a
+    name: sunbird-r-charts
+    type: application
+    urls:
+    - sunbird-r-charts-0.0.2.tgz
+    version: 0.0.2
+  - apiVersion: v2
+    appVersion: 0.0.13
+    created: "2024-10-28T13:41:30.657935+05:30"
     description: A Helm chart for Sunbird RC
     digest: 82b6308f64742685f05eeae16b4e2b9f2658119ae0139e1615d7f4f44f2234d0
     name: sunbird-r-charts
     type: application
     urls:
-    - packages/sunbird-r-charts-0.0.1.tgz
+    - sunbird-r-charts-0.0.1.tgz
     version: 0.0.1
   sunbird_rc_charts:
   - apiVersion: v2
     appVersion: 0.0.13
-    created: "2024-07-08T13:09:38.810262298Z"
+    created: "2024-10-28T13:41:30.686055+05:30"
+    description: A Helm chart for Sunbird RC
+    digest: 5484833b302386c067e95a1d417109bed99b55e91295b6e5568154ba77afefc9
+    name: sunbird_rc_charts
+    type: application
+    urls:
+    - sunbird_rc_charts-0.0.3.tgz
+    version: 0.0.3
+  - apiVersion: v2
+    appVersion: 0.0.13
+    created: "2024-10-28T13:41:30.679624+05:30"
+    description: A Helm chart for Sunbird RC
+    digest: a52b3bfad3330cfc052500c6aaf70ed8062ba8a269cd0426b72245adf803a85a
+    name: sunbird_rc_charts
+    type: application
+    urls:
+    - sunbird_rc_charts-0.0.2.tgz
+    version: 0.0.2
+  - apiVersion: v2
+    appVersion: 0.0.13
+    created: "2024-10-28T13:41:30.674313+05:30"
     description: A Helm chart for Sunbird RC
     digest: 1084368a22ffecc8247ce26578ec77829c1e64c4bcd8654e82767edb1b491550
     name: sunbird_rc_charts
     type: application
     urls:
-    - packages/sunbird_rc_charts-0.0.1.tgz
+    - sunbird_rc_charts-0.0.1.tgz
     version: 0.0.1
   vault-init:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2024-07-08T13:09:38.810862019Z"
+    created: "2024-10-28T13:41:30.688238+05:30"
+    description: A Helm chart for Kubernetes
+    digest: fa664469ce09aab65be7245bff9380e7f7fbef945550b4b65bd0f74a754a432b
+    name: vault-init
+    type: application
+    urls:
+    - vault-init-0.3.0.tgz
+    version: 0.3.0
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2024-10-28T13:41:30.687579+05:30"
     description: A Helm chart for Kubernetes
     digest: cb5c5369546300413df0199a50cfdd11f2ece940c91ea4a599e88b8fab9c3d9d
     name: vault-init
     type: application
     urls:
-    - packages/vault-init-0.1.0.tgz
+    - vault-init-0.1.0.tgz
     version: 0.1.0
-generated: "2024-07-08T13:09:38.794582075Z"
+generated: "2024-10-28T13:41:30.641221+05:30"

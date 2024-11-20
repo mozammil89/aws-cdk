@@ -13,8 +13,8 @@ export class helmvaultinitStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props: helmvaultinitStackProps) {
         super(scope, id, props);
         const eksCluster = props.eksCluster;
-        const vaultInitRepository = "https://dpgonaws.github.io/dpg-helm";
-        const vaulInitVersion = "0.1.0";
+        const vaultInitRepository = props.config.REPOSITORY;
+        // const vaulInitVersion = "0.1.0";
         const namespace = props.config.NAMESPACE;
         const release = props.config.VAULTINIT_RELEASE_NAME;
         const chart = "vault-init";
@@ -27,8 +27,8 @@ export class helmvaultinitStack extends cdk.Stack {
             namespace: namespace,
             createNamespace: true,
             release: release,
-            version: vaulInitVersion,
-            wait: true,
+            // version: vaulInitVersion,
+            wait: false,
             repository: vaultInitRepository,
             values: {
                 envVars: {

@@ -22,6 +22,8 @@ export type ConfigProps = {
   ROLE_ARN: string;
   EKS_CLUSTER_NAME: string;
   SUNBIRD_RC_MODULES_CHOICE: string;
+  RC_EXTERNAL_DOMAIN: string;
+  CERT_ARN: string;
 
 };
 
@@ -32,7 +34,8 @@ export const getConfig = (): ConfigProps => ({
   CIDR: process.env.CIDR || "",
   MAX_AZS: Number(process.env.MAZ_AZs) || 2,
   CHART: "sunbird_rc_charts",
-  REPOSITORY: "https://sunbird-rc.github.io/aws-cdk/packages",
+  // REPOSITORY: "https://sunbird-rc.github.io/aws-cdk/packages",
+  REPOSITORY: "https://mozammil89.github.io/aws-cdk/packages",
   NAMESPACE: "sbrc2",
   VAULT_RELEASE_NAME: "sbrc2",
   C_RELEASE_NAME: "sbrc2-c",
@@ -45,4 +48,6 @@ export const getConfig = (): ConfigProps => ({
   ROLE_ARN: process.env.ROLE_ARN || "",
   EKS_CLUSTER_NAME: process.env.EKS_CLUSTER_NAME || "ekscluster-sbrc2",
   SUNBIRD_RC_MODULES_CHOICE: process.env.SUNBIRD_RC_MODULES_CHOICE || "RC",
+  RC_EXTERNAL_DOMAIN: process.env.RC_EXTERNAL_DOMAIN || "",
+  CERT_ARN: process.env.CERT_ARN || "",
 });

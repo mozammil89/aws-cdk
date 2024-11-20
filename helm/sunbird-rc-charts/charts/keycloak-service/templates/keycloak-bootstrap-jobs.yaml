@@ -1,0 +1,107 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: keycloak-setup
+  namespace: {{ .Release.Namespace }}  
+  labels:
+    app.kubernetes.io/instance: sbrc2-rc
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: keycloak-setup
+    app.kubernetes.io/version: latest
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+spec:
+  template:
+    spec:
+      serviceAccountName: keycloak-setup-sa
+      containers:
+        - name: keycloak-registry-setup
+          image: ghcr.io/mozammil89/vault-init
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -x
+              echo "Starting Keycloak setup..."
+
+              # Wait for Keycloak pod to be ready
+              echo "Checking if Keycloak pod is ready..."
+              until kubectl -n {{ .Release.Namespace }} get pods -l app.kubernetes.io/name=keycloak-service -o jsonpath='{.items[0].status.phase}' | grep -q "Running"; do
+                echo "Waiting for Keycloak pod to be ready..."
+                sleep 5
+              done
+              echo "Keycloak pod is now running."
+
+              # Get Keycloak pod IP
+              echo "Fetching Keycloak pod IP..."
+              KEYCLOAK_POD_IP=$(kubectl -n {{ .Release.Namespace }} get pod -l app.kubernetes.io/name=keycloak-service -o jsonpath='{.items[0].status.podIP}')
+              echo "Keycloak pod IP is: $KEYCLOAK_POD_IP"
+
+              # Define Keycloak URL using pod IP
+              export KEYCLOAK_URL="http://$KEYCLOAK_POD_IP:8080/auth"
+              export REALM="master"
+              export USERNAME="admin"
+              export PASSWORD="admin123"
+              echo "Keycloak URL set to: $KEYCLOAK_URL"
+
+              ATTEMPT=1
+              MAX_ATTEMPTS=10
+
+              while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
+                  echo "Attempting to obtain token from Keycloak (Attempt $ATTEMPT)..."
+                  
+                  # Attempt to get the token
+                  export TOKEN=$(curl -k -X POST "$KEYCLOAK_URL/realms/$REALM/protocol/openid-connect/token" \
+                  --data "grant_type=password&client_id=admin-cli&username=$USERNAME&password=$PASSWORD" \
+                  | jq -r .access_token)
+
+                  if [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ]; then
+                      echo "Failed to obtain token, retrying in 30 seconds..."
+                      sleep 30
+                      ATTEMPT=$((ATTEMPT + 1))
+                  else
+                      echo "Token obtained successfully: $TOKEN"
+                      break
+                  fi
+              done
+
+
+              # Download realm-export.json
+              echo "Downloading realm-export.json..."
+              curl -L -o realm-export.json https://raw.githubusercontent.com/Sunbird-RC/sunbird-rc-core/main/imports/realm-export.json
+              echo "Downloaded realm-export.json."
+
+              # Import realm
+              echo "Importing realm to Keycloak..."
+              curl -k -X POST "$KEYCLOAK_URL/admin/realms" \
+                -H "Authorization: Bearer $TOKEN" \
+                -H "Content-Type: application/json" \
+                --data-binary @realm-export.json
+              echo "Realm imported successfully."
+
+              # Fetch Client ID
+              echo "Fetching Client ID for 'admin-api'..."
+              export CLIENT_ID=$(curl -k -X GET "$KEYCLOAK_URL/admin/realms/sunbird-rc/clients" \
+                -H "Authorization: Bearer $TOKEN" \
+                -H "Content-Type: application/json" | jq -r '.[] | select(.clientId == "admin-api") | .id')
+              echo "Client ID obtained: $CLIENT_ID"
+
+              # Regenerate Client Secret
+              echo "Regenerating client secret for Client ID: $CLIENT_ID..."
+              export KEYCLOAK_ADMIN_CLIENT_SECRET=$(curl -k -X POST "$KEYCLOAK_URL/admin/realms/sunbird-rc/clients/$CLIENT_ID/client-secret" \
+                -H "Authorization: Bearer $TOKEN" \
+                -H "Content-Type: application/json" | jq -r .value | base64)
+              echo "Client secret regenerated successfully."
+
+              # Update Kubernetes secret with new KEYCLOAK_ADMIN_CLIENT_SECRET
+              echo "Updating Kubernetes secret with new Keycloak admin client secret..."
+              kubectl -n {{ .Release.Namespace }} patch secret rc-secret \
+                --type='json' \
+                -p='[{"op": "replace", "path": "/data/KEYCLOAK_ADMIN_CLIENT_SECRET", "value": "'$KEYCLOAK_ADMIN_CLIENT_SECRET'"}]'
+              echo "Kubernetes secret updated successfully."
+              
+              echo "Restarting Registry service with Keycloak client secret"
+              kubectl -n {{ .Release.Namespace }} rollout restart deployment {{ .Release.Namespace }}-rc-registry
+
+              echo "Keycloak setup process completed."
+      restartPolicy: Never
+  backoffLimit: 4

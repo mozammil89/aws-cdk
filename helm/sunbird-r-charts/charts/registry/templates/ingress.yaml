@@ -23,6 +23,7 @@ metadata:
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
+    alb.ingress.kubernetes.io/certificate-arn: {{ .Values.global.certificateARN | quote }}
 spec:
   {{- if and .Values.ingress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
   ingressClassName: {{ .Values.ingress.className }}
@@ -38,9 +39,8 @@ spec:
     {{- end }}
   {{- end }}
   rules:
-    - host: {{ .Values.global.host | quote }}
     {{- range .Values.ingress.hosts }}
-      http:
+    - http:
         paths:
           {{- range .paths }}
           - path: {{ .path }}

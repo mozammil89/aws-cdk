@@ -25,14 +25,15 @@ export class sunbirdrc2helmStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props: sunbirdrc2helmStackProps) {
         super(scope, id, props);
 
-        const vpc = props.vpc;
         const eksCluster = props.eksCluster;
         const rdssecretARN = props.rdssecret;
         const RDS_PASSWORD = props.RDS_PASSWORD;
-        const chartNmae = props.chartName;
+        const chartName = props.chartName;
         const signatureProviderName = props.signatureProviderName;
         const releaseName = props.config.RC_RELEASE_NAME;
         const credentialingVaultReleaseName = props.config.VAULT_RELEASE_NAME;
+        const rcExternalDomain = props.config.RC_EXTERNAL_DOMAIN;
+        const sslCertArn = props.config.CERT_ARN;
 
         const secretName = sm.Secret.fromSecretAttributes(this, "ImportedSecret", {
             secretCompleteArn: rdssecretARN,
@@ -40,11 +41,9 @@ export class sunbirdrc2helmStack extends cdk.Stack {
         const getValueFromSecret = (secret: ISecret, key: string): string => {
             return secret.secretValueFromJson(key).unsafeUnwrap();
         };
-        const dbPass = getValueFromSecret(secretName, "password");
 
         const base64encodedDBpass = cdk.Fn.base64(RDS_PASSWORD);
 
-        const chart = props.config.CHART;
         const repository = props.config.REPOSITORY;
         const namespace = props.config.NAMESPACE;
         const rdsHost = props.rdsHost;
@@ -58,14 +57,17 @@ export class sunbirdrc2helmStack extends cdk.Stack {
 
         new helm.HelmChart(this, "cdksbrc2helm", {
             cluster: eksCluster,
-            chart: chartNmae,
+            chart: chartName,
+            // version: '0.0.2',
             namespace: namespace,
             createNamespace: true,
             release: releaseName,
-            wait: true,
+            wait: false,
             repository: repository,
             values: {
                 global: {
+                    host: rcExternalDomain,
+                    certificateARN: sslCertArn,
                     database:
                     {
                         host: rdsHost,
@@ -145,11 +147,5 @@ export class sunbirdrc2helmStack extends cdk.Stack {
                 },
             }
         });
-
-
-
-
     }
-
-
 }
