@@ -7,7 +7,7 @@
 - **Kubectl Client**: Configured with the Amazon EKS cluster. 
 - **Public Domain/Sub-Domain**: Along with SSL certificates for HTTPS.
 
-![Architecture](documentation/imgs/aws-cdk-diagrams-Page-4.jpg)
+![Architecture](imgs/aws-cdk-diagrams-Page-4.jpg)
 
 
 ### Public Domain/sub-domain
