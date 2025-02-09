@@ -4,7 +4,8 @@
 
 - **AWS Account**: An AWS account to deploy AWS CDK stacks
 - **[AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)**: Configured with AWS account
-- **Kubectl Client**: Configured with the Amazon EKS cluster. 
+- **Amazon EC2 bastion host**: For accessing a [private only Amazon EKS API](https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html) server.
+- **Kubectl Client**: Configured on Amazon EC2 bastion host with the Amazon EKS cluster. 
 - **Public Domain/Sub-Domain**: Along with SSL certificates for HTTPS.
 
 
