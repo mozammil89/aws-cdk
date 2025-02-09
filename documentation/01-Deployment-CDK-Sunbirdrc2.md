@@ -79,25 +79,21 @@ cdk bootstrap aws://<ACCOUNT-NUMBER>/<REGION>
 
 ## Deploy CDK
 
-<<<<<<< HEAD
-   | ENVIRONMENT   VARIABLES   | EXAMPLE VALUE                                                                         | DESCRIPTION                                                                                                                                                            |
-|---------------------------|---------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| REGION                    | us-east-1                                                                             | AWS region                                                                                                                                                             |
-| ACCOUNT                   | 123456789123                                                                          | AWS 12 digit account number                                                                                                                                            |
-| CIDR                      | 10.20.0.0/16                                                                          | VPC CIDR, change it as per your   environment                                                                                                                          |
-| MAX_AZS                   | 2                                                                                     | AWS Availability Zone count,   default 2                                                                                                                               |
-| RDS_USER                  | postgres                                                                              | Database user name for core   registory service, default 'postgres'                                                                                                    |
-| RDS_PASSWORD              | NLhL*I-e54e                                                                           | Database password, used while DB   creation and passed down to Sunbrd RC services helm chart                                                                           |
-| EKS_CLUSTER_NAME          | ekscluster-sbrc2                                                                      | AWS EKS Cluster name                                                                                                                                               |
-| ROLE_ARN                  | `arn:aws:iam::<aws-account-id>:role/Admin` | Amazon EKS mastersRole, to be   associated with the system:masters RBAC group, giving super-user access to   the cluster      
-| CERT_ARN          | `arn:aws:acm:ap-south-1:<aws-account-id>:certificate/<identifier>`                                                                      | SSL Certificate Role ARN obtain from AWS Certificate Manager service    
-                                         |
-| RC_EXTERNAL_DOMAIN          | `sunbric-rc.exmaple.com`                                                                      | Domain/subdomain to be used with `registry` service and for which SSL CERT ARN is generated.    
-                                         |
-| SUNBIRD_RC_MODULES_CHOICE | RC                                                                                    | Modules to be installed as part   of this deployment. Values may be  **'R'** -     Registry,  **'C'** - Credentialing, **'RC'** - Registry and Credentialing. Default value is 'RC'  |
-=======
+| ENVIRONMENT VARIABLES       | EXAMPLE VALUE                                                       | DESCRIPTION                                                                                                                                                  |
+|----------------------------|-------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| REGION                     | us-east-1                                                       | AWS region                                                                                                                                                   |
+| ACCOUNT                    | 123456789123                                                    | AWS 12-digit account number                                                                                                                                  |
+| CIDR                       | 10.20.0.0/16                                                   | VPC CIDR, change it as per your environment                                                                                                                  |
+| MAX_AZS                    | 2                                                               | AWS Availability Zone count, default 2                                                                                                                       |
+| RDS_USER                   | postgres                                                       | Database user name for core registry service, default 'postgres'                                                                                            |
+| RDS_PASSWORD               | NLhL*I-e54e                                                   | Database password, used while DB creation and passed down to Sunbird RC services Helm chart                                                                  |
+| EKS_CLUSTER_NAME           | ekscluster-sbrc2                                              | AWS EKS Cluster name                                                                                                                                         |
+| ROLE_ARN                   | `arn:aws:iam::<aws-account-id>:role/Admin`                     | Amazon EKS mastersRole, to be associated with the system:masters RBAC group, giving super-user access to the cluster                                        |
+| CERT_ARN                   | `arn:aws:acm:ap-south-1:<aws-account-id>:certificate/<identifier>` | SSL Certificate ARN obtained from AWS Certificate Manager service                                                                                            |
+| RC_EXTERNAL_DOMAIN         | `sunbird-rc.example.com`                                        | Domain/subdomain to be used with `registry` service and for which SSL CERT ARN is generated.                                                                |
+| SUNBIRD_RC_MODULES_CHOICE  | RC                                                             | Modules to be installed as part of this deployment. Values may be **'R'** - Registry, **'C'** - Credentialing, **'RC'** - Registry and Credentialing. Default is 'RC'. |
+
 **Ensure you have updated the .env file before running following commands to begin deployment.**
->>>>>>> 934116f0a2f90356de78f18792b55e39e7f0a9fc
 
 ```
 # Emits the synthesized CloudFormation template
