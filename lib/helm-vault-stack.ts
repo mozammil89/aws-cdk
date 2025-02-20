@@ -35,6 +35,9 @@ export class helmvaultStack extends cdk.Stack {
                 },
                 server: {
                     affinity: "",
+                    dataStorage: {
+                        storageClass: "gp2", // Default storage class for EBS CSI driver.
+                    },
                     ha: {
                         enabled: true,
                         raft: {

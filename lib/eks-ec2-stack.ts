@@ -5,7 +5,7 @@ import * as eks from "aws-cdk-lib/aws-eks";
 import * as iam from "aws-cdk-lib/aws-iam";
 import { Construct } from "constructs";
 import { ConfigProps } from "./config";
-import { KubectlV30Layer } from '@aws-cdk/lambda-layer-kubectl-v30'
+import { KubectlV31Layer } from '@aws-cdk/lambda-layer-kubectl-v31' 
 
 export interface EksEC2StackProps extends cdk.StackProps {
     config: ConfigProps;
@@ -47,11 +47,12 @@ export class eksec2Stack extends cdk.Stack {
             vpc: vpc,
             vpcSubnets: [{ subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS }],
             defaultCapacity: 3,
-            defaultCapacityInstance: new ec2.InstanceType("t2.large"),
-            kubectlLayer: new KubectlV30Layer(this, "kubectl"),
-            version: eks.KubernetesVersion.V1_30,
-            securityGroup: securityGroupEKS,
-            endpointAccess: eks.EndpointAccess.PUBLIC_AND_PRIVATE,
+            defaultCapacityInstance: new ec2.InstanceType("t3.large"),
+            kubectlLayer: new KubectlV31Layer(this, "kubectl"),
+            version: eks.KubernetesVersion.V1_31,
+            //securityGroup: securityGroupEKS,
+            endpointAccess: eks.EndpointAccess.PRIVATE,
+            //endpointAccess: eks.EndpointAccess.PUBLIC_AND_PRIVATE,
             ipFamily: eks.IpFamily.IP_V4,
             clusterName: EKS_CLUSTER_NAME,
             mastersRole: iamRole,
@@ -60,7 +61,7 @@ export class eksec2Stack extends cdk.Stack {
             outputConfigCommand: true,
 
             albController: {
-                version: eks.AlbControllerVersion.V2_8_1,
+                version: eks.AlbControllerVersion.V2_8_2,
                 repository: "public.ecr.aws/eks/aws-load-balancer-controller",
             },
         });

@@ -4,8 +4,14 @@
 
 - **AWS Account**: An AWS account to deploy AWS CDK stacks
 - **[AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)**: Configured with AWS account
-- **Kubectl Client**: Configured with the Amazon EKS cluster. 
+- **Amazon EC2 bastion host**: For accessing a [private only Amazon EKS API](https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html) server.
+- **Kubectl Client**: Configured on Amazon EC2 bastion host with the Amazon EKS cluster. 
 - **Public Domain/Sub-Domain**: Along with SSL certificates for HTTPS.
+
+
+![AWS CDK Flow](imgs/aws-cdk-diagrams-Page-4.jpg)
+
+
 
 ### Public Domain/sub-domain
 
@@ -74,25 +80,21 @@ cdk bootstrap aws://<ACCOUNT-NUMBER>/<REGION>
 
 ## Deploy CDK
 
-<<<<<<< HEAD
-   | ENVIRONMENT   VARIABLES   | EXAMPLE VALUE                                                                         | DESCRIPTION                                                                                                                                                            |
-|---------------------------|---------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| REGION                    | us-east-1                                                                             | AWS region                                                                                                                                                             |
-| ACCOUNT                   | 123456789123                                                                          | AWS 12 digit account number                                                                                                                                            |
-| CIDR                      | 10.20.0.0/16                                                                          | VPC CIDR, change it as per your   environment                                                                                                                          |
-| MAX_AZS                   | 2                                                                                     | AWS Availability Zone count,   default 2                                                                                                                               |
-| RDS_USER                  | postgres                                                                              | Database user name for core   registory service, default 'postgres'                                                                                                    |
-| RDS_PASSWORD              | NLhL*I-e54e                                                                           | Database password, used while DB   creation and passed down to Sunbrd RC services helm chart                                                                           |
-| EKS_CLUSTER_NAME          | ekscluster-sbrc2                                                                      | AWS EKS Cluster name                                                                                                                                               |
-| ROLE_ARN                  | `arn:aws:iam::<aws-account-id>:role/Admin` | Amazon EKS mastersRole, to be   associated with the system:masters RBAC group, giving super-user access to   the cluster      
-| CERT_ARN          | `arn:aws:acm:ap-south-1:<aws-account-id>:certificate/<identifier>`                                                                      | SSL Certificate Role ARN obtain from AWS Certificate Manager service    
-                                         |
-| RC_EXTERNAL_DOMAIN          | `sunbric-rc.exmaple.com`                                                                      | Domain/subdomain to be used with `registry` service and for which SSL CERT ARN is generated.    
-                                         |
-| SUNBIRD_RC_MODULES_CHOICE | RC                                                                                    | Modules to be installed as part   of this deployment. Values may be  **'R'** -     Registry,  **'C'** - Credentialing, **'RC'** - Registry and Credentialing. Default value is 'RC'  |
-=======
+| ENVIRONMENT VARIABLES       | EXAMPLE VALUE                                                       | DESCRIPTION                                                                                                                                                  |
+|----------------------------|-------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| REGION                     | us-east-1                                                       | AWS region                                                                                                                                                   |
+| ACCOUNT                    | 123456789123                                                    | AWS 12-digit account number                                                                                                                                  |
+| CIDR                       | 10.20.0.0/16                                                   | VPC CIDR, change it as per your environment                                                                                                                  |
+| MAX_AZS                    | 2                                                               | AWS Availability Zone count, default 2                                                                                                                       |
+| RDS_USER                   | postgres                                                       | Database user name for core registry service, default 'postgres'                                                                                            |
+| RDS_PASSWORD               | NLhL*I-e54e                                                   | Database password, used while DB creation and passed down to Sunbird RC services Helm chart                                                                  |
+| EKS_CLUSTER_NAME           | ekscluster-sbrc2                                              | AWS EKS Cluster name                                                                                                                                         |
+| ROLE_ARN                   | `arn:aws:iam::<aws-account-id>:role/Admin`                     | Amazon EKS mastersRole, to be associated with the system:masters RBAC group, giving super-user access to the cluster                                        |
+| CERT_ARN                   | `arn:aws:acm:ap-south-1:<aws-account-id>:certificate/<identifier>` | SSL Certificate ARN obtained from AWS Certificate Manager service                                                                                            |
+| RC_EXTERNAL_DOMAIN         | `sunbird-rc.example.com`                                        | Domain/subdomain to be used with `registry` service and for which SSL CERT ARN is generated.                                                                |
+| SUNBIRD_RC_MODULES_CHOICE  | RC                                                             | Modules to be installed as part of this deployment. Values may be **'R'** - Registry, **'C'** - Credentialing, **'RC'** - Registry and Credentialing. Default is 'RC'. |
+
 **Ensure you have updated the .env file before running following commands to begin deployment.**
->>>>>>> 934116f0a2f90356de78f18792b55e39e7f0a9fc
 
 ```
 # Emits the synthesized CloudFormation template
@@ -101,16 +103,30 @@ cdk synth
 # List CDK stack
 cdk list
 
-# Deploy single stack  - vpcstacksbrc2, rdsstacksbrc2, eksstacksbrc2,sunbirdrc2helmStacksbrc2
+Expected output:
+vpcstacksbrc2
+rdsstacksbrc2
+eksstacksbrc2
+vaulthelmstacksbrc2
+vaultinithelmstacksbrc2
+sunbirdrc2helmStacksbrc2
+
+# Deploy single stack
 cdk deploy <stack_name>
 
-# Alternatively you could also deploy all stacks and CDK would handle the sequence
+# Alternatively you could also deploy all stacks and CDK would handle the dependencies
 cdk deploy --all 
 ```
 
-After installing all the CDK stacks, verify the AWS services in the AWS web console. The stack 'sunbirdrc2helmStacksbrc2' installs the Sunbird RC 2.0 helm chart, vault helm chart and vault init helm chart to initialize and unseal the vault in the EKS cluster. It is recommended to review the [Deployment through Helm](02-Deployment-Helm-Sunbirdrc2.md) guide to become familiar with Helm charts, services, and parameters. This will be beneficial if you opt to run the Helm chart separately from the CDK, following the "Mode Two: Direct Helm Chart Invocation" approach for installing the Sunbird RC stack.
+After installing all the CDK stacks, verify the AWS services in the AWS web console such as VPC, Amazon EKS cluster and RDS Postgres instance. 
 
-Follow the post installation steps to start using Sunbird RC2.0 services
+The CDK creates a private only EKS cluster. You would require to have an EC2 client machine in the same VPC where EKS is deployed. The `ROLE_ARN` variable governs Amazon EKS mastersRole, giving super-user access to the cluster. If you need to grant access to additional IAM users, groups, or roles, create the necessary [EKS access entries](https://docs.aws.amazon.com/eks/latest/userguide/creating-access-entries.html) accordingly.
+
+The stack `sunbirdrc2helmStacksbrc2` installs the Sunbird RC 2.0 services' helm chart including its dependencies `vaulthelmstacksbrc2` and `vaultinithelmstacksbrc2` that initializes and unseal the vault in the EKS cluster. 
+
+It is recommended to review the [Deployment through Helm](02-Deployment-Helm-Sunbirdrc2.md) guide to become familiar with Sunbird RC 2.0 Helm charts.
+
+Follow the post installation steps to start using Sunbird RC 2.0 services
 
 * [Post Installation Procedure](03-Post-Installation-Procedure.md)
 

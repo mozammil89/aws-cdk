@@ -43,7 +43,7 @@ const rds = new rdsStack(app, "rdsstacksbrc2", {
     rdspassword: config.RDS_PASSWORD,
 });
 
-// Provision target EKS with Fargate Cluster within the VPC
+// Provision target EKS cluster with PRIVATE access
 const eksCluster = new eksec2Stack(app, "eksstacksbrc2", {
     env: {
         region: config.REGION,
