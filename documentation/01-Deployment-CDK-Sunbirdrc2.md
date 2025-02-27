@@ -126,12 +126,8 @@ The stack `sunbirdrc2helmStacksbrc2` installs the Sunbird RC 2.0 services' helm 
 
 It is recommended to review the [Deployment through Helm](02-Deployment-Helm-Sunbirdrc2.md) guide to become familiar with Sunbird RC 2.0 Helm charts.
 
-Follow the post installation steps to start using Sunbird RC 2.0 services
-
-* [Post Installation Procedure](03-Post-Installation-Procedure.md)
-
-* NOTE:
-If Vault becomes sealed, you have the option to unseal it using the unseal token stored in Kubernetes secrets.
+*** NOTE: Optional***
+The Vault Init job ensures Vault is unseald post installation. However if you find out Vault becomes sealed, you have the option to unseal it using the unseal token stored in Kubernetes secrets.
 
 ```
 kubectl get secrets vault-unseal-key -n <namespace>
@@ -141,7 +137,13 @@ Unseal the vault pods using below command.
 ```
 kubectl exec <vault_pod_name> -n <namespace> -- vault operator unseal <vault_unseal_key>
 ```
+
+Follow the post installation steps to start using Sunbird RC 2.0 services
+
+* [Post Installation Procedure](03-Post-Installation-Procedure.md)
+
 **Lastly, if you wish to clean up, run 'AWS CDK destroy' to remove all AWS resources that were created by it.**
 ```
 cdk destroy [STACKS..]
+cdk destroy --all
 ```
