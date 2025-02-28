@@ -12,19 +12,12 @@ import { helmvaultStack } from "../lib/helm-vault-stack";
 import { sunbirdrc2helmStack } from "../lib/sunbirdrc2-helm-stack";
 import { helmvaultinitStack } from "../lib/helm-vaultInit-stack.";
 
-//CDK-nag
-import { AwsSolutionsChecks } from 'cdk-nag';
-import { Aspects } from 'aws-cdk-lib';
-
 const config = getConfig();
 const app = new cdk.App();
 
 type AwsEnvStackProps = StackProps & {
     config: ConfigProps;
 };
-
-// Apply cdk-nag checks globally to all stacks in the app
-//Aspects.of(app).add(new AwsSolutionsChecks());
 
 const MY_AWS_ENV_STACK_PROPS: AwsEnvStackProps = {
     env: {
