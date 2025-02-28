@@ -59,6 +59,7 @@ export class rdsStack extends cdk.Stack {
       serverlessV2MaxCapacity: 2,
       defaultDatabaseName: "registry",
       storageEncryptionKey: kmsKey,
+      deletionProtection: true,
       securityGroups: [securityGroupRDS],
       vpcSubnets: {
         subnetGroupName: "db-pvt-",

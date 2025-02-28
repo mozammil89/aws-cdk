@@ -41,5 +41,8 @@ export class vpcStack extends cdk.Stack {
                 },
             ],
         });
+
+        // Enable VPC Flow Logs
+        this.vpc.addFlowLog("VpcFlowLog");
     }
 }

@@ -59,7 +59,14 @@ export class eksec2Stack extends cdk.Stack {
             outputClusterName: true,
             authenticationMode: eks.AuthenticationMode.API_AND_CONFIG_MAP,
             outputConfigCommand: true,
-
+            // Enable Cluster Logging
+            clusterLogging: [
+                eks.ClusterLoggingTypes.API,
+                eks.ClusterLoggingTypes.AUTHENTICATOR,
+                eks.ClusterLoggingTypes.SCHEDULER,
+                eks.ClusterLoggingTypes.CONTROLLER_MANAGER,
+                eks.ClusterLoggingTypes.AUDIT,
+            ],
             albController: {
                 version: eks.AlbControllerVersion.V2_8_2,
                 repository: "public.ecr.aws/eks/aws-load-balancer-controller",
